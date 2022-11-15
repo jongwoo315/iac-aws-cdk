@@ -1,58 +1,56 @@
+# iac-aws-cdk 
+aws-cdk python 프로젝트
 
-# Welcome to your CDK Python project!
+## Table of Contents
+- [Introduction](#Introduction)
+- [Technologies Used](#Technologies-Used)
+- [Setup](#Setup)
+- [Usage](#Usage)
+- [Acknowledgements](#Acknowledgements)
 
-This is a blank project for CDK development with Python.
+## Introduction
+- aws-cdk를 사용해 AWS 리소스 배포
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Technologies Used
+- Python: 3.9
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+## Setup
+- `config/prod.ini.default`
+    - stack별로 설정값 입력 후 `config/prod.ini`로 파일명 변경 
+- 환경 구성 
+    ```shell
+    $ brew install awscli
+    $ npm install -g aws-cdk
 
-To manually create a virtualenv on MacOS and Linux:
+    $ pipenv shell --python 3.9
+    $ python -V
+    $ pipenv install
+    ```
 
-```
-$ python3 -m venv .venv
-```
+## Usage
+- 신규 stack은 `iac_aws_cdk`디렉토리 하위에 생성
+    - `app.py`에 추가한 stack 정보 추가
+- 리소스 정보 출처
+    - https://docs.aws.amazon.com/cdk/api/v1/python/index.html
+- <stack명>: `app.py`에 명시된 stack
+- <프로필명>: `~/.aws/credentials`에 명시된 프로필명
+- <리전명>: 배포하려는 stack의 리전 (eg. `ap-northeast-2`)
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
-
-```
-$ source .venv/bin/activate
-```
-
-If you are a Windows platform, you would activate the virtualenv like this:
-
-```
-% .venv\Scripts\activate.bat
-```
-
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
-$ pip install -r requirements.txt
-```
-
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
-```
-
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
+- boostrap
+    ```shell
+    $ account_id=$(aws sts get-caller-identity --profile <프로필명> --query Account --output text)
+    $ cdk boostrap aws://$account_id/<리전명> --profile <프로필명>
+    ```
+- preview stack
+    ```shell
+    $ cdk synth <stack명> --profile <프로필명>  # cloudformation형태로 출력
+    $ cdk diff <stack명> --profile <프로필명>  # stack 업데이트하는 경우
+    ```
+- deploy stack
+    ```shell
+    $ cdk deploy <stack명> --profile <프로필명>
+    ```
+- destroy stack 
+    ```shell
+    $ cdk destroy <stack명> --profile <프로필명>
+    ```

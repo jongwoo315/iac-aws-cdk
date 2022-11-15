@@ -1,28 +1,66 @@
 #!/usr/bin/env python3
-import os
-
+from configparser import ConfigParser
 import aws_cdk as cdk
+from iac_aws_cdk.secret_creation import SecretCreation
+from iac_aws_cdk.ecs_task import EcsTask
+from iac_aws_cdk.jw_app import JwApp
+from iac_aws_cdk.pub_ec2_test import PubEc2Test
+from iac_aws_cdk.s3_obj_upload import S3ObjUpload
 
-from iac_aws_cdk.iac_aws_cdk_stack import IacAwsCdkStack
-
+config = ConfigParser()
+config.read('config/prod.ini')
 
 app = cdk.App()
-IacAwsCdkStack(app, "IacAwsCdkStack",
-    # If you don't specify 'env', this stack will be environment-agnostic.
-    # Account/Region-dependent features and context lookups will not work,
-    # but a single synthesized template can be deployed anywhere.
 
-    # Uncomment the next line to specialize this stack for the AWS Account
-    # and Region that are implied by the current CLI configuration.
 
-    #env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
-
-    # Uncomment the next line if you know exactly what Account and Region you
-    # want to deploy the stack to. */
-
-    #env=cdk.Environment(account='123456789012', region='us-east-1'),
-
-    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
+SecretCreation(
+    app,
+    'SecretCreation',
+    env=cdk.Environment(
+        account=config.get('ecs_task', 'aws_account'),
+        region=config.get('ecs_task', 'aws_region')
     )
+)
+
+
+EcsTask(
+    app,
+    'EcsTask',
+    env=cdk.Environment(
+        account=config.get('ecs_task', 'aws_account'),
+        region=config.get('ecs_task', 'aws_region')
+    )
+)
+
+
+JwApp(
+    app,
+    'JwApp',
+    env=cdk.Environment(
+        account=config.get('jw_app', 'aws_account'),
+        region=config.get('jw_app', 'aws_region')
+    )
+)
+
+
+PubEc2Test(
+    app,
+    'PubEc2Test',
+    env=cdk.Environment(
+        account=config.get('jw_app', 'aws_account'),
+        region=config.get('jw_app', 'aws_region')
+    )
+)
+
+
+S3ObjUpload(
+    app,
+    'S3ObjUpload',
+    env=cdk.Environment(
+        account=config.get('s3_obj_upload', 'aws_account'),
+        region=config.get('s3_obj_upload', 'aws_region')
+    )
+)
+
 
 app.synth()
