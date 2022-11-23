@@ -6,6 +6,7 @@ from iac_aws_cdk.ecs_task import EcsTask
 from iac_aws_cdk.jw_app import JwApp
 from iac_aws_cdk.pub_ec2_test import PubEc2Test
 from iac_aws_cdk.s3_obj_upload import S3ObjUpload
+from iac_aws_cdk.box_office_mojo import BoxOfficeMojo
 
 config = ConfigParser()
 config.read('config/prod.ini')
@@ -62,5 +63,12 @@ S3ObjUpload(
     )
 )
 
-
+BoxOfficeMojo(
+    app,
+    'BoxOfficeMojo',
+    env=cdk.Environment(
+        account=config.get('box_office_mojo', 'aws_account'),
+        region=config.get('box_office_mojo', 'aws_region')
+    )
+)
 app.synth()
