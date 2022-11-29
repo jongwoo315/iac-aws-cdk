@@ -179,6 +179,7 @@ class BoxOfficeMojo(Stack):
             )  # 필수
         )
 
+        # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_glue/CfnCrawler.html
         # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_glue/CfnCrawler.html#s3targetproperty
         # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_s3/Bucket.html
         # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_glue/CfnCrawler.html#aws_cdk.aws_glue.CfnCrawler.RecrawlPolicyProperty
