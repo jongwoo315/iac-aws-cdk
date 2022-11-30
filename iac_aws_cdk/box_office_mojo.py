@@ -3,7 +3,8 @@ from aws_cdk import (
     Stack,
     aws_s3 as s3,
     aws_iam as iam,
-    aws_glue as glue
+    aws_glue as glue,
+    aws_athena as athena
 )
 from constructs import Construct
 
@@ -219,8 +220,24 @@ class BoxOfficeMojo(Stack):
             # )
         )
 
-# 1. s3 target connection name 역할 -> 없는듯? 주석처리해도 되나? -> network connection 부분 -> 주석처리해도 문제없음
-# 1-2. s3 path는 fstring으로 추가 -> 문제없음
-# 2. classifier 연결이 저렇게 가능? -> 생성됨 / 연결됨 (database연결과 비슷한 형태)
-# 3. database는 그냥 string으로 입력 가능? -> 생성됨 / 연결안됨 -> CfnCrawler에 명시한 이름과 CfnDatabase input name만 맞추면 되는 듯
-# 4. schedule은 주석처리하면 on demand형태가 되는가? -> o
+        # 1. s3 target connection name 역할 -> 없는듯? 주석처리해도 되나? -> network connection 부분 -> 주석처리해도 문제없음
+        # 1-2. s3 path는 fstring으로 추가 -> 문제없음
+        # 2. classifier 연결이 저렇게 가능? -> 생성됨 / 연결됨 (database연결과 비슷한 형태)
+        # 3. database는 그냥 string으로 입력 가능? -> 생성됨 / 연결안됨 -> CfnCrawler에 명시한 이름과 CfnDatabase input name만 맞추면 되는 듯
+        # 4. schedule은 주석처리하면 on demand형태가 되는가? -> o
+
+        # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_athena/CfnWorkGroup.html
+        # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_athena/CfnWorkGroup.html#aws_cdk.aws_athena.CfnWorkGroup.WorkGroupConfigurationProperty
+        # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_athena/CfnWorkGroup.html#aws_cdk.aws_athena.CfnWorkGroup.ResultConfigurationProperty
+        athena.CfnWorkGroup(
+            self,
+            id='AthenaTestWorkGroup',
+            name='AthenaTestWorkGroup',
+            state='ENABLED',
+            work_group_configuration=athena.CfnWorkGroup.WorkGroupConfigurationProperty(
+                publish_cloud_watch_metrics_enabled=True,
+                result_configuration=athena.CfnWorkGroup.ResultConfigurationProperty(
+                    output_location=mojo_athena_query_result.s3_url_for_object()
+                )
+            )
+        )
