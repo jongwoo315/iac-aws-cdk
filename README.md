@@ -18,8 +18,11 @@ aws-cdk python 프로젝트
 - `config/prod.ini.default`
     - stack별로 설정값 입력 후 `config/prod.ini`로 파일명 변경 
 - 환경 구성 
+    - awscli는 pkg를 다운받아서 설치하도록 한다(brew 사용x).
+        - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html 
+    - 커맨드
     ```shell
-    $ brew install awscli
+    # $ brew install awscli
     $ npm install -g aws-cdk
 
     $ pipenv shell --python 3.9
